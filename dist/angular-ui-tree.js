@@ -198,8 +198,8 @@
 
   angular.module('ui.tree')
 
-    .controller('TreeNodesController', ['$scope', '$element',
-      function ($scope, $element) {
+    .controller('TreeNodesController', ['$scope', '$element', '$timeout',
+      function ($scope, $element, $timeout) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -243,22 +243,11 @@
           return $scope.$modelValue.length > 0;
         };
 
-        $scope.safeApply = function (fn) {
-          var phase = this.$root.$$phase;
-          if (phase == '$apply' || phase == '$digest') {
-            if (fn && (typeof (fn) === 'function')) {
-              fn();
-            }
-          } else {
-            this.$apply(fn);
-          }
-        };
-
         //Called in apply method of UiTreeHelper.dragInfo.
         $scope.removeNode = function (node) {
           var index = $scope.$modelValue.indexOf(node.$modelValue);
           if (index > -1) {
-            $scope.safeApply(function () {
+            $timeout(function () {
               $scope.$modelValue.splice(index, 1)[0];
             });
             return $scope.$treeScope.$callbacks.removed(node);
@@ -268,7 +257,7 @@
 
         //Called in apply method of UiTreeHelper.dragInfo.
         $scope.insertNode = function (index, nodeData) {
-          $scope.safeApply(function () {
+          $timeout(function () {
             $scope.$modelValue.splice(index, 0, nodeData);
           });
         };
@@ -864,18 +853,22 @@
               }
 
               //If tree is sourceOnly (noDragDrop) don't show placeholder when moving about it.
-              if (scope.sourceOnly) {
+              //if (scope.sourceOnly) {
+              // hide elements and show on move
                 placeElm.css('display', 'none');
-              }
+                dragElm.css('display', 'none');
+
+              //}
 
               //Insert placeholder.
               element.after(placeElm);
               element.after(hiddenPlaceElm);
               if (dragInfo.isClone() && scope.sourceOnly) {
                 dragElm.append(cloneElm);
-              } else {
-                dragElm.append(element);
               }
+              //else {
+              //  dragElm.append(element);
+              //}
 
               //Create drag element.
               $document.find('body').append(dragElm);
@@ -933,6 +926,17 @@
               //If check ensures that drag element was created.
               if (dragElm) {
                 e.preventDefault();
+
+                if (firstMoving) {
+                    //show everything
+                    dragElm.css('display', 'contents');
+                    placeElm.css('display', 'contents');
+
+                    if (!(dragInfo.isClone() && scope.sourceOnly)) {
+                      // wait to append since it removes element from tree
+                        dragElm.append(element);
+                    }
+                }
 
                 //Deselect anything (text, etc.) that was selected when move began.
                 if ($window.getSelection) {

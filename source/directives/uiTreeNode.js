@@ -250,18 +250,22 @@
               }
 
               //If tree is sourceOnly (noDragDrop) don't show placeholder when moving about it.
-              if (scope.sourceOnly) {
+              //if (scope.sourceOnly) {
+              // hide elements and show on move
                 placeElm.css('display', 'none');
-              }
+                dragElm.css('display', 'none');
+
+              //}
 
               //Insert placeholder.
               element.after(placeElm);
               element.after(hiddenPlaceElm);
               if (dragInfo.isClone() && scope.sourceOnly) {
                 dragElm.append(cloneElm);
-              } else {
-                dragElm.append(element);
               }
+              //else {
+              //  dragElm.append(element);
+              //}
 
               //Create drag element.
               $document.find('body').append(dragElm);
@@ -319,6 +323,17 @@
               //If check ensures that drag element was created.
               if (dragElm) {
                 e.preventDefault();
+
+                if (firstMoving) {
+                    //show everything
+                    dragElm.css('display', 'contents');
+                    placeElm.css('display', 'contents');
+
+                    if (!(dragInfo.isClone() && scope.sourceOnly)) {
+                      // wait to append since it removes element from tree
+                        dragElm.append(element);
+                    }
+                }
 
                 //Deselect anything (text, etc.) that was selected when move began.
                 if ($window.getSelection) {
