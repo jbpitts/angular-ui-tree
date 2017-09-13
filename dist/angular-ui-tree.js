@@ -257,9 +257,10 @@
 
         //Called in apply method of UiTreeHelper.dragInfo.
         $scope.insertNode = function (index, nodeData) {
-          $timeout(function () {
-            $scope.$modelValue.splice(index, 0, nodeData);
-          });
+          // todo: should have call back to see if insert should be done
+          //$timeout(function () {
+          //  $scope.$modelValue.splice(index, 0, nodeData);
+          //});
         };
 
         $scope.childNodes = function () {
