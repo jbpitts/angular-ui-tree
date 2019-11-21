@@ -1662,13 +1662,14 @@
                 }
 
                 //CloneEnabled and cross-tree so copy and do not remove from source.
-                if (this.isClone() && this.isForeign()) {
-                  this.parent.insertNode(this.index, this.sourceInfo.cloneModel);
-                //Any other case, remove and reinsert.
-                } else {
-                  this.source.remove();
-                  this.parent.insertNode(this.index, nodeData);
-                }
+                // jbpitts: overriding
+                // if (this.isClone() && this.isForeign()) {
+                //   this.parent.insertNode(this.index, this.sourceInfo.cloneModel);
+                // //Any other case, remove and reinsert.
+                // } else {
+                //   this.source.remove();
+                //   this.parent.insertNode(this.index, nodeData);
+                // }
               }
             };
           },
